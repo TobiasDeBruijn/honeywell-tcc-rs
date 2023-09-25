@@ -1,0 +1,6 @@
+target/
+.idea/
+Cargo.lock
+
+# Might contain sensitive data
+*.har
