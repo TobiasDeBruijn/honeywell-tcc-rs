@@ -1,8 +1,8 @@
-use reqwest::Client;
-use crate::api::locations::{get_locations};
-use crate::api::login::{LoggedIn, login, LoginError};
-use crate::api::USER_AGENT;
+use crate::api::locations::get_locations;
+use crate::api::login::{login, LoggedIn, LoginError};
 use crate::api::zones::set_zone_temperature;
+use crate::api::USER_AGENT;
+use reqwest::Client;
 
 mod api;
 
@@ -20,7 +20,10 @@ impl TccApi {
     /// # Errors
     ///
     /// If the request fails
-    pub async fn new_with_login<S1: AsRef<str>, S2: AsRef<str>>(email: S1, password: S2) -> Result<Self, LoginError> {
+    pub async fn new_with_login<S1: AsRef<str>, S2: AsRef<str>>(
+        email: S1,
+        password: S2,
+    ) -> Result<Self, LoginError> {
         let client = Client::builder()
             .user_agent(USER_AGENT)
             .cookie_store(true)
@@ -28,10 +31,7 @@ impl TccApi {
 
         let login = login(&client, email, password).await?;
 
-        Ok(Self {
-            client,
-            login,
-        })
+        Ok(Self { client, login })
     }
 
     /// Get the display name of the logged in user
@@ -59,7 +59,11 @@ impl TccApi {
     /// # Errors
     ///
     /// If the request fails
-    pub async fn set_zone_temperature(&self, zone_id: impl Into<String>, temperature: f32) -> Result<(), reqwest::Error> {
+    pub async fn set_zone_temperature(
+        &self,
+        zone_id: impl Into<String>,
+        temperature: f32,
+    ) -> Result<(), reqwest::Error> {
         set_zone_temperature(&self.client, zone_id, temperature).await
     }
 }

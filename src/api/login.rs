@@ -1,8 +1,8 @@
-use reqwest::{Client, Response};
+use crate::api::url;
 use reqwest::header::ACCEPT;
+use reqwest::{Client, Response};
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
-use crate::api::url;
 
 #[derive(Serialize)]
 struct LoginRequest<'a> {
@@ -68,11 +68,18 @@ pub enum LoginError {
     NoCookie,
 }
 
-pub async fn login<S1: AsRef<str>, S2: AsRef<str>>(client: &Client, email: S1, password: S2) -> Result<LoggedIn, LoginError> {
+pub async fn login<S1: AsRef<str>, S2: AsRef<str>>(
+    client: &Client,
+    email: S1,
+    password: S2,
+) -> Result<LoggedIn, LoginError> {
     let response = client
         .post(url("/accountApi/login"))
         .header(ACCEPT, "application/json")
-        .json(&LoginRequest::from_email_password(email.as_ref(), password.as_ref()))
+        .json(&LoginRequest::from_email_password(
+            email.as_ref(),
+            password.as_ref(),
+        ))
         .send()
         .await?
         .error_for_status()?;
@@ -90,7 +97,8 @@ pub async fn login<S1: AsRef<str>, S2: AsRef<str>>(client: &Client, email: S1, p
 }
 
 fn find_cookie(response: &Response, name: &str) -> Result<String, LoginError> {
-    Ok(response.cookies()
+    Ok(response
+        .cookies()
         .find(|cookie| cookie.name().eq(name))
         .ok_or(LoginError::NoCookie)?
         .value()

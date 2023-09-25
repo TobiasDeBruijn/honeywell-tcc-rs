@@ -1,6 +1,6 @@
+use crate::api::url;
 use reqwest::Client;
 use serde::Serialize;
-use crate::api::url;
 
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -30,7 +30,11 @@ impl SetZoneTemperatureRequest {
     }
 }
 
-pub async fn set_zone_temperature(client: &Client, zone_id: impl Into<String>, temperature: f32) -> Result<(), reqwest::Error> {
+pub async fn set_zone_temperature(
+    client: &Client,
+    zone_id: impl Into<String>,
+    temperature: f32,
+) -> Result<(), reqwest::Error> {
     client
         .post(url("/ZonesApi/SetZoneTemperature"))
         .json(&SetZoneTemperatureRequest::new(zone_id.into(), temperature))

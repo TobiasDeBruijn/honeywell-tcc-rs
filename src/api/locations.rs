@@ -1,7 +1,7 @@
-use reqwest::Client;
-use reqwest::header::ACCEPT;
-use serde::Deserialize;
 use crate::api::url;
+use reqwest::header::ACCEPT;
+use reqwest::Client;
+use serde::Deserialize;
 
 #[derive(Deserialize)]
 #[serde(rename_all = "PascalCase")]
@@ -22,7 +22,7 @@ pub struct Location {
     pub id: String,
     pub city: String,
     pub country: String,
-    pub zones: Vec<Zone>
+    pub zones: Vec<Zone>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -37,7 +37,8 @@ pub struct Zone {
 }
 
 pub async fn get_locations(client: &Client) -> Result<Vec<Location>, reqwest::Error> {
-    let payload: GetLocationsResponse = client.get(url("/locationsapi/getLocations"))
+    let payload: GetLocationsResponse = client
+        .get(url("/locationsapi/getLocations"))
         .header(ACCEPT, "application/json")
         .send()
         .await?
